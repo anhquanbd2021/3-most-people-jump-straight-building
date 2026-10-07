@@ -1,0 +1,21 @@
+{
+  "task": "agent",
+  "harness": {
+    "tools": [
+      "search_docs",
+      "write_file"
+    ],
+    "readable": [
+      "docs/"
+    ],
+    "writable": [
+      "workspace/"
+    ],
+    "memoryBudget": 16
+  },
+  "loop": {
+    "maxSteps": 12,
+    "feedback": true,
+    "stallGuard": true
+  }
+}

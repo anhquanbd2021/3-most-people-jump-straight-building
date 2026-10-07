@@ -1,0 +1,16 @@
+{
+  "name": "layer-atlas-demo",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Layer Atlas — degrade each layer of a mini agent system (harness, loop, graph) and watch the signature failure emerge.",
+  "scripts": {
+    "start": "node app/server.js",
+    "report": "node scripts/report.mjs",
+    "test": "node --test \"test/*.test.mjs\"",
+    "check": "npm test && npm run report"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "task": "agent",
+  "harness": {},
+  "loop": {
+    "maxSteps": 12,
+    "feedback": true,
+    "stallGuard": true
+  }
+}

@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Layer Atlas — how to read this lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&display=swap">
+<link rel="stylesheet" href="/styles.css">
+<!-- pb-shell --><link rel="stylesheet" href="./pb-shell.css"><!-- pb-shell --><!-- pb-back --><link rel="stylesheet" href="./pb-back.css"><!-- pb-back --></head>
+<body class="guide">
+<header>
+  <div class="masthead">
+    <h1>How to read this lab</h1>
+  </div>
+  <nav><a href="/">← back to the lab</a></nav>
+</header>
+<main>
+  <p>Every production AI system has three layers. This lab builds a miniature
+  one and lets you break each layer independently — because each layer fails
+  with a <strong>signature symptom</strong>, the symptom tells you which layer
+  is broken before you touch the model.</p>
+
+  <h2>The three layers</h2>
+  <ul>
+    <li><strong>Harness</strong> — what the agent can <em>access</em>: tools,
+      filesystem, permissions, memory. In this lab it's
+      <code>public/harness.mjs</code>: a tool registry plus a read/write scope.
+      Remove <code>read_file</code> or deny <code>workspace/</code> and the
+      model can't reach reality — it reports the fault and aborts.</li>
+    <li><strong>Loop</strong> — how the agent <em>thinks</em>: think → act →
+      check → feedback. In <code>public/loop.mjs</code>, turning
+      <code>feedback: false</code> drops every observation. The scripted model
+      can't see its own results, so it re-issues the same call until the step
+      cap — the "spinning" symptom. The <code>stallGuard</code> preset shows
+      the fix: progress detection that stops the spin early.</li>
+    <li><strong>Graph</strong> — how work <em>splits</em>: nodes, parallel
+      branches, joins, shared state. In <code>public/graph.mjs</code> two
+      analysts read-modify-write the same <code>findings</code> key. In
+      <code>flat</code> mode the second write silently overwrites the first —
+      a lost update. In <code>versioned</code> mode the stale write is a
+      conflict that retries and merges.</li>
+  </ul>
+
+  <h2>What the atlas does</h2>
+  <p><code>public/atlas.mjs</code> reads a run report and maps the symptom to
+  the layer: blocked/missing tool calls → <strong>harness</strong>, identical
+  repeated calls or a step-cap stop → <strong>loop</strong>, lost updates on
+  shared state → <strong>graph</strong>. That's the article's argument made
+  executable: debug by layer, not by vibes.</p>
+
+  <h2>Honest limits</h2>
+  <ul>
+    <li>The "model" (<code>public/model.mjs</code>) is a deterministic state
+      machine, not an LLM — the lab shows <em>where</em> failures live, not
+      how a real model reasons.</li>
+    <li>The graph runner simulates interleaving in one process; real
+      distributed workflows add partial failure, retries across processes,
+      and ordering guarantees this demo doesn't model.</li>
+    <li>Diagnosis rules are the three signature symptoms — real systems have
+      faults that cross layers (a dying tool can look like a spinning loop).</li>
+    <li>The world is a fixture: fake files, fake docs index, obviously-fake
+      secret in <code>secrets/prod.env</code>.</li>
+  </ul>
+</main>
+<!-- pb-shell --><a class="pb-shell" href="https://github.com/anhquanbd2021/3-most-people-jump-straight-building" title="3-most-people-jump-straight-building — an Article Playbook demo (view source)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="2" y="2" width="9" height="9" rx="2" fill="#2dd4bf"/><rect x="13" y="2" width="9" height="9" rx="2" fill="#2dd4bf" opacity=".45"/><rect x="2" y="13" width="9" height="9" rx="2" fill="#2dd4bf" opacity=".45"/><rect x="13" y="13" width="9" height="9" rx="4.5" fill="#2dd4bf"/></svg><b>3-most-people-jump-straight-building</b><i>DEMO</i></a><!-- pb-shell --><!-- pb-back --><a class="pb-back" id="pb-back" href="https://github.com/anhquanbd2021/3-most-people-jump-straight-building" title="Back to the article — 3-most-people-jump-straight-building">← Article <i>PLAYBOOK</i></a><script>(function(){var a=document.getElementById('pb-back');if(!a)return;var h=location.hostname;if(/^(localhost|127\.0\.0\.1|192\.168\.|10\.|172\.(1[6-9]|2[0-9]|3[01])\.)/.test(h)){a.href='//'+h+':'+(/^(localhost|127\.0\.0\.1)$/.test(h)?'1234':'30082')+'/microsites/article.html?slug=3-most-people-jump-straight-building';}})();</script><!-- pb-back --></body>
+</html>
